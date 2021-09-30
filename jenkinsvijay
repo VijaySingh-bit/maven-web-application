@@ -1,0 +1,31 @@
+pipeline {
+    agent any
+    tools{
+        maven "maven3.8.2"
+        dockerTool "docker1"
+        
+    }
+    stages{
+        stage("get the code"){
+            steps{
+                git 'https://github.com/VijaySingh-bit/maven-web-application.git'
+            }
+        }
+        stage("Build the code"){
+            steps{
+                sh "mvn clean package"
+            }
+        }
+        stage("containerthecode"){
+            steps{
+                sh "docker build -t vijaysin321/maven-web-application:${BUILD_NUMBER} ."
+            }
+        }
+        stage("pushdockerhub"){
+            steps{
+                sh "docker login -u vijaysin321 -p Kush@12345"
+                sh "docker push vijaysin321/maven-web-application:${BUILD_NUMBER}"
+            }
+        }
+    }
+}
